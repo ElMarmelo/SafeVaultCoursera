@@ -10,3 +10,6 @@ Hi there, here's a little resume on what I did (And what copilot told me accordi
 3.  The implementation of parametrized queries can be seen in [AuthController.cs](./SafeVault.Web/Controllers/AuthController.cs)
 4. Added a new endpoint for registering (This was for testing sake in order to see if the database worked properly)
 5. Implemented unit tests using NUnit which can be found in [AuthControllerTests.cs](./SafeVault.Tests/TestInputValidation.cs) (They pass as of writing this in activity 1 (And this commit))
+
+### Activity 2
+1. Added proper authentication making use of BCrypt in [AuthController](./SafeVault.Web/Controllers/AuthController.cs)
