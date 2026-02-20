@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using MySqlConnector;
 
-namespace SafeVaultCoursera.Tests
+namespace SafeVault.Tests
 {
     [TestFixture]
     public class TestInputValidation
