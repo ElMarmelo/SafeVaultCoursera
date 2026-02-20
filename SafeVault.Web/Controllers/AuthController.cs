@@ -18,7 +18,7 @@ namespace SafeVault.Web.Controllers
         public async Task<IActionResult> Register(string username, string email, string password)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
-                return BadRequest("All fields are required.");
+                return BadRequest(new { Message = "All fields are required." });
 
             string passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
 
@@ -41,7 +41,7 @@ namespace SafeVault.Web.Controllers
             }
             catch (MySqlException ex) when (ex.Number == 1062) // Duplicate entry error code
             {
-                return BadRequest("Username or Email already exists.");
+                return BadRequest(new { Message = "Username or Email already exists." });
             }
         }
 
@@ -55,12 +55,12 @@ namespace SafeVault.Web.Controllers
                 "SELECT Password, Role FROM Users WHERE Username = @Username",
                 connection
             );
-            cmd.Parameters.AddWithValue("@Username", username);
+            cmd.Parameters.Add(new MySqlParameter("@Username", MySqlDbType.VarChar) { Value = username });
 
             await using var reader = await cmd.ExecuteReaderAsync();
 
             if (!await reader.ReadAsync())
-                return Unauthorized("Invalid credentials");
+                return Unauthorized(new { Message = "Invalid credentials" });
 
             var storedHash = reader.GetString("Password");
             var role = reader.GetString("Role");
@@ -68,7 +68,7 @@ namespace SafeVault.Web.Controllers
             bool isValid = BCrypt.Net.BCrypt.Verify(password, storedHash);
 
             if (!isValid)
-                return Unauthorized("Invalid credentials");
+                return Unauthorized(new { Message = "Invalid credentials" });
 
             var token = _tokenService.GenerateToken(username, role);
 
@@ -79,14 +79,14 @@ namespace SafeVault.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> CheckAdmin()
         {
-            return Ok("This is an admin only route!");
+            return Ok(new { Message = "This is an admin only route!" });
         }
 
         [Authorize(Roles = "User")]
         [HttpGet]
         public async Task<IActionResult> CheckUser()
         {
-            return Ok("This is a user only route!");
+            return Ok(new { Message = "This is a user only route!" });
         }
     }
 }

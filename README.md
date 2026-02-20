@@ -18,3 +18,17 @@ Hi there, here's a little resume on what I did (And what copilot told me accordi
 4. Implemented tests for authentication and rbac as seen in [TestAuthentication.cs](./SafeVault.Tests/TestAuthentication.cs)
 
 **Note: The tests have been written in a way where they need the local server to be running, I don't really plan to implement mock services, factories or anything as this isn't a "real" project and I don't want to spend aditional time in that, moreso it is besides the scope of the project/course, so the tests mainly involve making requests to the API and verifying the response from it**
+
+### Activity 3
+1. According to the AI Model the first vulnerability is inside of the Login method in the Auth controller
+> Issue: While you're using parameters correctly here, there's a potential issue with AddWithValue - it can cause unexpected type conversions and is generally discouraged.
+Solution:
+```cs
+cmd.Parameters.Add(new MySqlParameter("@Username", MySqlDbType.VarChar) { Value = username });
+```
+2. According to the AI the second vulnerability was related to XSS attacks, where on certain endpoints I was returning raw strings, the solution was to use response wrappers or return new messages that aren't vulnerable to XSS attacks
+```cs
+return Ok("This is an admin only route!"); -> return Ok(new { Message = "This is an admin only route!" });
+```
+
+According changes have been applied in this PR in order to comply with these observations.
